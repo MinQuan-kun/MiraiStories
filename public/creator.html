@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mirai Creator Studio</title>
+  <meta name="robots" content="noindex, nofollow"> <!-- Prevent search engines indexing the admin dashboard -->
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- CSS Stylesheet (Shared Design System) -->
+  <link rel="stylesheet" href="/style.css?v=7">
+  <link rel="icon" type="image/png" href="/logo.png">
+</head>
+
+<body class="theme-dark">
+
+  <!-- Glow Background Effects -->
+  <div class="glow-bg glow-purple"></div>
+  <div class="glow-bg glow-blue"></div>
+
+  <!-- Creator Access Verification Screen -->
+  <div id="creator-auth-screen" class="auth-fullscreen hidden">
+    <div class="auth-card">
+      <div class="auth-icon-glow">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2>Xác thực Quyền Creator</h2>
+      <p>Nhập ngày sinh của bạn để truy cập Không gian sáng tác</p>
+
+      <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+        <label for="creator-dob-input">Ngày sinh (Date of Birth)</label>
+        <input type="date" id="creator-dob-input" class="form-control"
+          style="background-color: rgba(255, 255, 255, 0.05); text-align: center;">
+      </div>
+
+      <button id="creator-auth-btn" class="btn btn-primary" style="width: 100%;"><i
+          class="fa-solid fa-unlock-keyhole"></i> Xác nhận truy cập</button>
+      <a href="/" class="back-link" style="display: block; margin-top: 18px; text-align: center;"><i
+          class="fa-solid fa-arrow-left"></i> Quay lại trang đọc</a>
+    </div>
+  </div>
+
+  <!-- Creator Header Navigation -->
+  <header class="app-header">
+    <div class="container header-container">
+      <a href="/creator" class="logo-link" id="logo-nav">
+        <img src="/logo.png" alt="Logo" class="logo-img">
+        <span class="logo-text">Web<span class="logo-highlight">Creator</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/creator" class="nav-item active" id="nav-dashboard"><i class="fa-solid fa-table-columns"></i> Bảng
+          điều khiển</a>
+        <a href="/creator/genres" class="nav-item" id="nav-genres-tab"><i class="fa-solid fa-tags"></i> Quản lý thể
+          loại</a>
+        <a href="/" target="_blank" class="nav-item"><i class="fa-solid fa-arrow-up-right-from-square"></i> Xem trang
+          đọc</a>
+      </nav>
+
+      <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
+        <button id="theme-toggle-btn" class="icon-btn" title="Đổi giao diện">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="logout-creator-btn" class="btn btn-secondary btn-sm"
+          style="border: 1px solid var(--accent-danger); color: var(--accent-danger); background: transparent;"><i
+            class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- VIEW 1: WRITER DASHBOARD -->
+      <section id="view-dashboard" class="spa-view">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="dashboard-title"><i class="fa-solid fa-feather-pointed text-primary"></i> Không gian sáng tác
+            </h1>
+            <p class="dashboard-subtitle">Quản lý các câu chuyện của bạn và xem thống kê chi tiết sáng tác.</p>
+          </div>
+          <button class="btn btn-primary" id="create-new-story-btn"><i class="fa-solid fa-plus"></i> Tạo truyện
+            mới</button>
+        </div>
+
+        <!-- Writing Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+            <div class="stat-num" id="stat-total-stories">0</div>
+            <div class="stat-lbl">Truyện sáng tác</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-list-ol"></i></div>
+            <div class="stat-num" id="stat-total-chapters">0</div>
+            <div class="stat-lbl">Chương xuất bản</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-pen-nib"></i></div>
+            <div class="stat-num" id="stat-total-words">0</div>
+            <div class="stat-lbl">Tổng số từ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-eye"></i></div>
+            <div class="stat-num" id="stat-total-reads">0</div>
+            <div class="stat-lbl">Tổng lượt đọc</div>
+          </div>
+        </div>
+
+        <h2 class="sub-section-title"><i class="fa-solid fa-folder-open"></i> Truyện của bạn</h2>
+
+        <!-- Dashboard Stories List -->
+        <div id="dashboard-stories-list" class="dashboard-stories-list">
+          <div class="loading-spinner">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải danh sách truyện...
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: STORY EDITOR -->
+      <section id="view-story-editor" class="spa-view hidden">
+        <div class="back-link-wrapper">
+          <a href="/creator" class="back-link" id="editor-back-to-dashboard"><i class="fa-solid fa-arrow-left"></i> Quay
+            lại Bảng sáng tác</a>
+        </div>
+
+        <div class="story-editor-container">
+          <h1 id="story-editor-page-title" class="editor-section-title">Thêm truyện mới</h1>
+
+          <div class="story-editor-grid">
+            <!-- Story Details Form -->
+            <div class="story-form-card">
+              <form id="story-meta-form" onsubmit="event.preventDefault();">
+                <!-- Tabs for Story Editing -->
+                <div class="story-edit-tabs"
+                  style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                  <button type="button" class="btn btn-secondary btn-sm active" id="story-tab-meta-btn"
+                    style="flex-grow: 1;">Thông tin chi tiết</button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="story-tab-design-btn"
+                    style="flex-grow: 1;"><i class="fa-solid fa-wand-magic-sparkles"></i> Thiết kế giao diện</button>
+                </div>
+
+                <!-- Tab 1: Meta fields -->
+                <div id="story-meta-fields">
+                  <div class="form-group">
+                    <label for="story-title-input">Tên truyện <span class="required">*</span></label>
+                    <input type="text" id="story-title-input" class="form-control" placeholder="Nhập tên truyện..."
+                      required>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group col-6">
+                      <label for="story-author-input">Tác giả</label>
+                      <input type="text" id="story-author-input" class="form-control" placeholder="Tên bút danh...">
+                    </div>
+                    <div class="form-group col-6">
+                      <label for="story-genre-input">Thể loại <span class="required">*</span></label>
+                      <select id="story-genre-input" class="form-control" required>
+                        <option value="">-- Chọn thể loại --</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group col-6">
+                      <label for="story-status-input">Trạng thái</label>
+                      <select id="story-status-input" class="form-control">
+                        <option value="Đang tiến hành">Đang tiến hành</option>
+                        <option value="Hoàn thành">Hoàn thành</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-6">
+                      <label for="story-tags-input">Từ khóa / Tags</label>
+                      <input type="text" id="story-tags-input" class="form-control"
+                        placeholder="Cách nhau bằng dấu phẩy...">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="story-synopsis-input">Tóm tắt nội dung <span class="required">*</span></label>
+                    <textarea id="story-synopsis-input" class="form-control" rows="5"
+                      placeholder="Tóm tắt giới thiệu tác phẩm..." required></textarea>
+                  </div>
+
+                  <!-- Custom Cover Generator / Custom Upload -->
+                  <div class="form-group">
+                    <label>Ảnh bìa truyện</label>
+                    <div class="cover-customizer-box">
+                      <!-- Tabs Headers -->
+                      <div class="cover-tabs-nav"
+                        style="display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                        <button type="button" class="btn btn-secondary btn-sm active" id="cover-tab-preset-btn"
+                          style="flex-grow: 1;">Bìa nghệ thuật (Preset)</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="cover-tab-custom-btn"
+                          style="flex-grow: 1;">Tải ảnh từ máy</button>
+                      </div>
+
+                      <!-- Tab content 1: Preset generator -->
+                      <div id="cover-preset-content">
+                        <div class="cover-presets" style="margin-bottom: 15px;">
+                          <button type="button" class="preset-btn p-blue active" data-colors="#6366f1,#a855f7"
+                            data-icon="📖" style="background: linear-gradient(135deg, #6366f1, #a855f7)"></button>
+                          <button type="button" class="preset-btn p-red" data-colors="#b91c1c,#f59e0b" data-icon="🐉"
+                            style="background: linear-gradient(135deg, #b91c1c, #f59e0b)"></button>
+                          <button type="button" class="preset-btn p-cyan" data-colors="#06b6d4,#3b82f6" data-icon="❄️"
+                            style="background: linear-gradient(135deg, #06b6d4, #3b82f6)"></button>
+                          <button type="button" class="preset-btn p-forest" data-colors="#059669,#10b981" data-icon="🌲"
+                            style="background: linear-gradient(135deg, #059669, #10b981)"></button>
+                          <button type="button" class="preset-btn p-sunset" data-colors="#ea580c,#d97706" data-icon="🌅"
+                            style="background: linear-gradient(135deg, #ea580c, #d97706)"></button>
+                          <button type="button" class="preset-btn p-cosmic" data-colors="#0f172a,#1e3a8a"
+                            data-icon="🕉️" style="background: linear-gradient(135deg, #0f172a, #1e3a8a)"></button>
+                        </div>
+
+                        <div class="cover-icon-selector"
+                          style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                          <label>Icon bìa: </label>
+                          <select id="cover-icon-input" class="form-control inline-select"
+                            style="max-width: 140px; margin-bottom: 0;">
+                            <option value="📖">📖 Sách</option>
+                            <option value="🐉">🐉 Rồng</option>
+                            <option value="🕉️">🕉️ Tâm linh</option>
+                            <option value="❄️">❄️ Tuyết</option>
+                            <option value="🌅">🌅 Bình minh</option>
+                            <option value="🌲">🌲 Cây</option>
+                            <option value="✨">✨ Phép thuật</option>
+                            <option value="❤️">❤️ Tình yêu</option>
+                            <option value="🔮">🔮 Pha lê</option>
+                            <option value="⚔️">⚔️ Kiếm</option>
+                          </select>
+                          <button type="button" class="btn btn-secondary btn-sm" id="icon-file-upload-trigger-btn"
+                            style="padding: 6px 12px; margin: 0;"><i class="fa-solid fa-upload"></i> Chọn ảnh từ thư
+                            mục</button>
+                          <input type="file" id="icon-file-upload-input" accept="image/*" style="display: none;">
+                          <input type="hidden" id="icon-custom-url-val" value="">
+                          <div id="icon-custom-preview-box" style="display: none; align-items: center; gap: 8px;">
+                            <img id="icon-custom-preview-img" src=""
+                              style="width: 30px; height: 30px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <button type="button" class="icon-btn" id="clear-custom-icon-btn" title="Xóa ảnh icon"
+                              style="padding: 2px;"><i class="fa-solid fa-circle-xmark text-danger"></i></button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Tab content 2: Custom upload -->
+                      <div id="cover-custom-content" style="display: none;">
+                        <div class="file-upload-wrapper">
+                          <input type="file" id="cover-file-upload-input" accept="image/*" class="form-control">
+                          <input type="hidden" id="cover-custom-url-val" value="">
+
+                          <div id="cover-upload-preview-box"
+                            style="margin-top: 15px; display: none; text-align: center;">
+                            <img id="cover-upload-preview-img" src=""
+                              style="max-height: 180px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;"><i
+                                class="fa-solid fa-circle-check text-primary"></i> Đã tải ảnh lên thành công</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 2: Design fields -->
+                <div id="story-design-fields" class="hidden">
+
+                  <div class="form-group">
+                    <label for="story-design-bgcolor">Màu nền trang đọc</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                      <input type="color" id="story-design-bgcolor" class="form-control"
+                        style="width: 50px; padding: 2px; height: 40px; cursor: pointer; margin-bottom: 0;">
+                      <input type="text" id="story-design-bgcolor-text" class="form-control"
+                        placeholder="Mã màu Hex (ví dụ: #0f172a)..." style="flex-grow: 1; margin-bottom: 0;">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="story-design-width">Độ rộng nội dung đọc (Lề trái/phải)</label>
+                    <select id="story-design-width" class="form-control">
+                      <option value="narrow">Hẹp (Lề 2 bên rộng - Tập trung đọc)</option>
+                      <option value="medium" selected>Vừa phải (Mặc định)</option>
+                      <option value="wide">Rộng (Lề 2 bên hẹp)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Ảnh nền trang đọc</label>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                      <button type="button" class="btn btn-secondary btn-sm" id="story-design-bgimage-upload-btn"
+                        style="margin: 0; padding: 10px 16px; font-size: 13px;"><i class="fa-solid fa-upload"></i> Tải
+                        ảnh nền</button>
+                      <input type="text" id="story-design-bgimage-url" class="form-control"
+                        placeholder="Hoặc nhập đường dẫn ảnh nền..." style="flex-grow: 1; margin-bottom: 0;">
+                      <button type="button" class="icon-btn text-danger" id="clear-design-bgimage-btn"
+                        title="Xóa ảnh nền" style="padding: 10px; display: none;"><i
+                          class="fa-solid fa-circle-xmark"></i></button>
+                    </div>
+                    <input type="file" id="story-design-bgimage-file" accept="image/*" style="display: none;">
+
+                    <div id="story-design-bgimage-preview-box"
+                      style="display: none; text-align: center; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                      <img id="story-design-bgimage-preview-img" src=""
+                        style="max-height: 100px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
+                    </div>
+                  </div>
+
+                  <div class="form-row" style="margin-bottom: 20px;">
+                    <div class="form-group col-6">
+                      <label for="story-design-bgopacity">Độ hiển thị ảnh nền: <span
+                          id="bgopacity-val">100%</span></label>
+                      <input type="range" id="story-design-bgopacity" min="0" max="1" step="0.05" value="1"
+                        class="form-control-range" style="width: 100%; margin-top: 10px;">
+                    </div>
+                    <div class="form-group col-6">
+                      <label for="story-design-bgblur">Độ mờ (Blur) ảnh nền: <span id="bgblur-val">0px</span></label>
+                      <input type="range" id="story-design-bgblur" min="0" max="20" step="1" value="0"
+                        class="form-control-range" style="width: 100%; margin-top: 10px;">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" id="save-story-meta-btn" class="btn btn-primary"><i
+                      class="fa-solid fa-save"></i> Lưu thông tin truyện</button>
+                  <button type="button" id="delete-story-btn" class="btn btn-danger hidden"><i
+                      class="fa-solid fa-trash"></i> Xóa truyện này</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Story Chapters Panel -->
+            <div class="story-chapters-card" id="story-chapters-card">
+              <div class="chapter-card-header">
+                <h3>Danh sách chương</h3>
+                <button type="button" id="add-new-chapter-btn" class="btn btn-secondary btn-sm"><i
+                    class="fa-solid fa-plus"></i> Viết chương mới</button>
+              </div>
+
+              <ul class="editor-chapter-list" id="editor-chapters-list">
+                <!-- Chapters will be listed here dynamically -->
+                <li class="empty-list-notice">Lưu thông tin truyện trước khi bắt đầu tạo chương.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: DISTRACTION-FREE CHAPTER EDITOR -->
+      <section id="view-chapter-editor" class="spa-view hidden">
+        <div class="editor-header-bar">
+          <button id="editor-back-to-story-btn" class="back-link btn-link"><i class="fa-solid fa-arrow-left"></i> Quay
+            lại truyện</button>
+          <div class="editor-saving-indicator" id="editor-saving-indicator">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Đã tự động lưu nháp
+          </div>
+          <div class="editor-actions-top">
+            <button id="save-chapter-draft-btn" class="btn btn-secondary"><i class="fa-solid fa-file-signature"></i> Lưu
+              nháp</button>
+            <button id="publish-chapter-btn" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Xuất
+              bản</button>
+          </div>
+        </div>
+
+        <div class="writing-workspace">
+          <div class="writing-paper">
+            <div class="title-input-wrapper">
+              <input type="text" id="chapter-title-input" class="writing-title-field"
+                placeholder="Tên chương (ví dụ: Chương 1: Sự khởi đầu)..." required>
+            </div>
+
+            <div class="editor-toolbar-writing"
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div class="toolbar-buttons" style="display: flex; gap: 8px;">
+                <button type="button" class="toolbar-tool-btn" id="upload-image-btn"><i
+                    class="fa-solid fa-file-image"></i> Tải ảnh từ máy</button>
+                <button type="button" class="toolbar-tool-btn" id="insert-image-url-btn"><i
+                    class="fa-solid fa-link"></i> Chèn từ URL</button>
+              </div>
+
+              <!-- Editor/Preview Toggle -->
+              <div class="editor-toggle-container"
+                style="display: flex; background: rgba(255,255,255,0.08); padding: 3px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <button type="button" class="btn btn-xs active" id="editor-btn-write"
+                  style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: none; background: var(--accent-color); color: #fff; line-height: 1;"><i
+                    class="fa-solid fa-pen-nib"></i> Viết</button>
+                <button type="button" class="btn btn-xs" id="editor-btn-preview"
+                  style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: none; background: transparent; color: var(--text-color); line-height: 1;"><i
+                    class="fa-solid fa-eye"></i> Xem trước</button>
+              </div>
+            </div>
+
+            <div class="content-textarea-wrapper" id="content-textarea-wrapper">
+              <textarea id="chapter-content-input" class="writing-content-field"
+                placeholder="Bắt đầu viết những dòng đầu tiên của chương..." required></textarea>
+            </div>
+
+            <!-- Live Preview Viewport -->
+            <div id="chapter-preview-wrapper" class="content-preview-wrapper hidden"
+              style="min-height: 400px; padding: 20px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); overflow-y: auto;">
+              <div id="chapter-preview-content" class="reader-text font-serif"
+                style="font-size: 18px; line-height: 1.8; color: var(--text-color);"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="writing-footer-status">
+          <div class="status-item"><i class="fa-solid fa-calculator"></i> <span id="chapter-word-count">0</span> từ
+          </div>
+          <div class="status-item"><i class="fa-solid fa-text-width"></i> <span id="chapter-char-count">0</span> ký tự
+          </div>
+          <div class="status-item"><i class="fa-solid fa-hourglass-half"></i> <span id="chapter-reading-time">0</span>
+            phút đọc dự kiến</div>
+          <div class="status-item status-right"><i class="fa-solid fa-circle-check"></i> Trạng thái hiện tại: <strong
+              id="chapter-status-badge">Bản nháp</strong></div>
+        </footer>
+      </section>
+
+      <!-- VIEW 4: GENRES MANAGER -->
+      <section id="view-genres" class="spa-view hidden">
+        <div class="back-link-wrapper">
+          <a href="/creator" class="back-link" id="genres-back-to-dashboard"><i class="fa-solid fa-arrow-left"></i> Quay
+            lại Bảng sáng tác</a>
+        </div>
+
+        <div class="story-editor-container">
+          <h1 class="editor-section-title"><i class="fa-solid fa-tags text-primary"></i> Quản lý thể loại</h1>
+          <p class="dashboard-subtitle" style="margin-bottom: 30px;">Tạo mới hoặc xóa các thể loại truyện trong hệ
+            thống.</p>
+
+          <div class="story-editor-grid">
+            <!-- Create Genre Form -->
+            <div class="story-form-card">
+              <h3>Tạo thể loại mới</h3>
+              <form id="create-genre-form" onsubmit="event.preventDefault();" style="margin-top: 15px;">
+                <div class="form-group">
+                  <label for="genre-name-input">Tên thể loại <span class="required">*</span></label>
+                  <input type="text" id="genre-name-input" class="form-control"
+                    placeholder="Nhập tên thể loại (ví dụ: Võ hiệp, Võng du...)" required>
+                </div>
+                <div class="form-actions" style="margin-top: 20px;">
+                  <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tạo thể loại</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Genres List Panel -->
+            <div class="story-chapters-card">
+              <h3>Danh sách thể loại hiện có</h3>
+              <ul class="editor-chapter-list" id="genres-list" style="margin-top: 15px;">
+                <!-- Genres will be listed here dynamically -->
+                <div class="loading-spinner">
+                  <i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải danh sách thể loại...
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Notification Toast -->
+  <div class="toast-notification" id="toast-notif">
+    <i class="fa-solid fa-circle-info toast-icon"></i>
+    <span class="toast-message" id="toast-msg">Thông báo tự động!</span>
+  </div>
+
+  <!-- Hidden file input for chapter editor image upload -->
+  <input type="file" id="chapter-image-upload-input" accept="image/*" style="display: none;">
+
+  <!-- Creator Workspace Client Logic -->
+  <script src="/creator.js?v=20260612"></script>
+</body>
+
+</html>

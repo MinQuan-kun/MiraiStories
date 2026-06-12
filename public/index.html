@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Placeholder Tags - Server will replace these on specific pages -->
+  <title><!-- SEO_TITLE --></title>
+  <meta name="description" content="<!-- SEO_DESC -->">
+  <!-- SEO_META_TAGS -->
+  <!-- SEO_SCHEMA -->
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="/style.css?v=7">
+  <link rel="icon" type="image/png" href="/logo.png">
+</head>
+
+<body class="theme-dark"> <!-- Defaulting to dark theme for premium tech aesthetic -->
+
+  <!-- Custom Background Overlay for Creator Themes -->
+  <div id="custom-bg-overlay"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background-size: cover; background-position: center; pointer-events: none; transition: all 0.5s ease;">
+  </div>
+
+  <!-- Glow Background Effects -->
+  <div class="glow-bg glow-purple"></div>
+  <div class="glow-bg glow-blue"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="container header-container">
+      <a href="/" class="logo-link" id="logo-nav">
+        <img src="/logo.png" alt="Logo" class="logo-img">
+        <span class="logo-text">Mirai<span class="logo-highlight">Stories</span></span>
+      </a>
+
+      <div class="header-actions">
+        <!-- Layout Customizer Button (hidden by default, shown only to creators) -->
+        <button id="layout-customizer-toggle" class="icon-btn" title="Chỉnh sửa giao diện" style="display: none;">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+        <button id="theme-toggle-btn" class="icon-btn" title="Đổi giao diện">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container (SPA Views) -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- VIEW 1: HOME/DISCOVERY PORTAL -->
+      <section id="view-home" class="spa-view">
+
+
+        <div id="stories-section" class="section-title-wrapper">
+          <h2 class="section-title"><i class="fa-solid fa-book-open"></i> Danh sách truyện</h2>
+        </div>
+
+        <!-- Stories Grid -->
+        <div id="stories-grid" class="stories-grid">
+          <!-- Stories will be dynamically injected here -->
+          <div class="loading-spinner">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải danh sách truyện...
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: STORY DETAILS -->
+      <section id="view-story-detail" class="spa-view hidden">
+        <div class="back-link-wrapper">
+          <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
+        </div>
+
+        <div class="story-detail-card">
+          <div class="story-detail-grid">
+            <div class="story-cover-wrapper">
+              <img id="detail-cover-img" src="" alt="Story Cover" class="story-detail-cover">
+            </div>
+
+            <div class="story-meta-content">
+              <span id="detail-genre" class="detail-badge">Thể loại</span>
+              <h1 id="detail-title" class="detail-title">Tên truyện</h1>
+              <p class="detail-author">Tác giả: <span id="detail-author-name">Tác giả</span></p>
+
+              <div class="detail-stats">
+                <span class="stat-item"><i class="fa-solid fa-eye"></i> <span id="detail-reads">0</span> lượt đọc</span>
+                <span class="stat-item clickable" id="like-story-btn"><i class="fa-solid fa-heart"></i> <span
+                    id="detail-likes">0</span> lượt thích</span>
+                <span class="stat-item"><i class="fa-solid fa-list-ol"></i> <span id="detail-chapters-count">0</span>
+                  chương</span>
+              </div>
+
+              <div class="detail-tags" id="detail-tags-container">
+                <!-- Tags will be dynamically injected -->
+              </div>
+
+              <div class="detail-synopsis">
+                <h3>Tóm tắt truyện</h3>
+                <p id="detail-synopsis-text">Tóm tắt nội dung truyện ở đây...</p>
+              </div>
+
+              <div class="detail-actions">
+                <button id="read-first-btn" class="btn btn-primary btn-lg"><i class="fa-solid fa-play"></i> Đọc chương
+                  đầu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-tabs-container">
+          <div class="tab-headers">
+            <button class="tab-header active" data-tab="toc"><i class="fa-solid fa-list"></i> Danh sách chương</button>
+            <button class="tab-header" data-tab="comments"><i class="fa-solid fa-comments"></i> Bình luận (<span
+                id="detail-comments-count">0</span>)</button>
+          </div>
+
+          <div class="tab-contents">
+            <!-- Tab 1: Table of Contents -->
+            <div class="tab-content active" id="tab-toc">
+              <ul class="chapter-list" id="detail-chapters-list">
+                <!-- Chapters will be dynamically injected here -->
+              </ul>
+            </div>
+
+            <!-- Tab 2: Comments -->
+            <div class="tab-content" id="tab-comments">
+              <!-- Comment Form -->
+              <form id="comment-form" class="comment-form">
+                <h4>Viết bình luận của bạn</h4>
+                <div class="form-group inline-group">
+                  <input type="text" id="comment-author" class="form-control" placeholder="Tên của bạn..." required>
+                </div>
+                <div class="form-group">
+                  <textarea id="comment-content" class="form-control" rows="3"
+                    placeholder="Chia sẻ suy nghĩ của bạn về tác phẩm..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Gửi bình
+                  luận</button>
+              </form>
+
+              <!-- Comments List -->
+              <div class="comments-list" id="detail-comments-list">
+                <!-- Comments will be injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: READER MODE -->
+      <section id="view-reader-mode" class="spa-view hidden">
+        <!-- Reader Navigation Toolbar -->
+        <div class="reader-toolbar">
+          <div class="reader-toolbar-left">
+            <a href="" id="reader-back-to-story" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span
+                id="reader-story-title-nav">Tên truyện</span></a>
+          </div>
+
+          <div class="reader-toolbar-right">
+            <!-- Font settings dropdown toggle -->
+            <div class="dropdown">
+              <button class="icon-btn toolbar-btn" id="reader-settings-toggle" title="Cấu hình chế độ đọc">
+                <i class="fa-solid fa-font"></i>
+              </button>
+              <div class="dropdown-menu reader-settings-menu" id="reader-settings-panel">
+                <div class="settings-section">
+                  <label>Giao diện nền</label>
+                  <div class="theme-selectors">
+                    <button class="theme-select theme-light-sel" data-theme="light">Sáng</button>
+                    <button class="theme-select theme-sepia-sel" data-theme="sepia">Sepia</button>
+                    <button class="theme-select theme-dark-sel" data-theme="dark">Tối</button>
+                  </div>
+                </div>
+
+                <div class="settings-section">
+                  <label>Font chữ</label>
+                  <div class="font-selectors">
+                    <button class="font-select font-serif-sel active" data-font="serif">Merriweather</button>
+                    <button class="font-select font-sans-sel" data-font="sans">Inter</button>
+                    <button class="font-select font-outfit-sel" data-font="outfit">Outfit</button>
+                  </div>
+                </div>
+
+                <div class="settings-section">
+                  <label>Kích thước chữ: <span id="font-size-val">18px</span></label>
+                  <div class="size-controls">
+                    <button class="btn btn-secondary btn-sm" id="font-decrease"><i
+                        class="fa-solid fa-minus"></i></button>
+                    <button class="btn btn-secondary btn-sm" id="font-increase"><i
+                        class="fa-solid fa-plus"></i></button>
+                  </div>
+                </div>
+
+                <div class="settings-section">
+                  <label>Độ rộng dòng: <span id="line-width-val">Trùng khớp</span></label>
+                  <div class="width-selectors">
+                    <button class="width-select" data-width="narrow">Hẹp</button>
+                    <button class="width-select active" data-width="medium">Vừa</button>
+                    <button class="width-select" data-width="wide">Rộng</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reader-container" id="reader-viewport">
+          <header class="reader-header">
+            <h1 id="reader-chapter-title" class="reader-title">Tên Chương</h1>
+            <div class="reader-meta">
+              <span><i class="fa-solid fa-clock"></i> <span id="reader-read-time">0</span> phút đọc</span>
+              <span><i class="fa-solid fa-file-word"></i> <span id="reader-word-count">0</span> từ</span>
+            </div>
+          </header>
+
+          <!-- Chapter Content Viewport -->
+          <article id="reader-text-content" class="reader-text font-serif width-medium">
+            <!-- Dynamic text content -->
+          </article>
+
+          <!-- Navigation buttons -->
+          <div class="reader-nav-footer">
+            <button id="prev-chapter-btn" class="btn btn-secondary"><i class="fa-solid fa-chevron-left"></i> Chương
+              trước</button>
+            <button id="next-chapter-btn" class="btn btn-primary">Chương tiếp theo <i
+                class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Writer dashboard and editors have been split into creator.html -->
+
+    </div>
+  </main>
+
+  <!-- Sidebar Layout Customizer (Reader Portal) -->
+  <div id="reader-layout-customizer" class="customizer-sidebar hidden">
+    <div class="sidebar-header">
+      <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Thiết kế giao diện đọc</h3>
+      <button id="close-customizer-btn" class="icon-btn"
+        style="border: none; background: transparent; font-size: 24px; color: var(--text-color); cursor: pointer; padding: 0 5px; line-height: 1;">&times;</button>
+    </div>
+    <div class="sidebar-body">
+      <div id="customizer-target-info" class="customizer-info-box">
+        Đang cấu hình: <strong id="customizer-target-name">Trang chủ</strong>
+      </div>
+
+      <!-- Customizer Fields -->
+
+
+      <div class="form-group">
+        <label for="portal-design-bgcolor">Màu nền trang</label>
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 0;">
+          <input type="color" id="portal-design-bgcolor" class="form-control"
+            style="width: 50px; padding: 2px; height: 40px; cursor: pointer; margin-bottom: 0;">
+          <input type="text" id="portal-design-bgcolor-text" class="form-control" placeholder="Ví dụ: #0F172A..."
+            style="flex-grow: 1; margin-bottom: 0;">
+        </div>
+      </div>
+
+      <div class="form-group" id="portal-design-width-group" style="display: none;">
+        <label for="portal-design-width">Độ rộng nội dung đọc</label>
+        <select id="portal-design-width" class="form-control">
+          <option value="narrow">Hẹp (Lề rộng)</option>
+          <option value="medium" selected>Vừa (Mặc định)</option>
+          <option value="wide">Rộng (Lề hẹp)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Ảnh nền trang</label>
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="portal-design-bgimage-upload-btn"
+            style="margin: 0; padding: 8px 12px; font-size: 12px;"><i class="fa-solid fa-upload"></i> Tải ảnh</button>
+          <input type="text" id="portal-design-bgimage-url" class="form-control" placeholder="Nhập đường dẫn ảnh nền..."
+            style="flex-grow: 1; margin-bottom: 0;">
+          <button type="button" class="icon-btn text-danger" id="clear-portal-design-bgimage-btn" title="Xóa ảnh nền"
+            style="padding: 10px; display: none; margin: 0;"><i class="fa-solid fa-circle-xmark"></i></button>
+        </div>
+        <input type="file" id="portal-design-bgimage-file" accept="image/*" style="display: none;">
+
+        <div id="portal-design-bgimage-preview-box"
+          style="display: none; text-align: center; background: rgba(0,0,0,0.1); padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); margin-top: 8px;">
+          <img id="portal-design-bgimage-preview-img" src="" style="max-height: 80px; border-radius: 4px;">
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom: 20px;">
+        <div class="form-group col-6" style="margin-bottom: 0;">
+          <label for="portal-design-bgopacity">Độ hiển thị ảnh: <span id="portal-bgopacity-val">100%</span></label>
+          <input type="range" id="portal-design-bgopacity" min="0" max="1" step="0.05" value="1"
+            class="form-control-range" style="width: 100%; margin-top: 8px;">
+        </div>
+        <div class="form-group col-6" style="margin-bottom: 0;">
+          <label for="portal-design-bgblur">Độ mờ (Blur): <span id="portal-bgblur-val">0px</span></label>
+          <input type="range" id="portal-design-bgblur" min="0" max="20" step="1" value="0" class="form-control-range"
+            style="width: 100%; margin-top: 8px;">
+        </div>
+      </div>
+
+      <button id="save-portal-design-btn" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-save"></i>
+        Lưu cấu hình thiết kế</button>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-notification" id="toast-notif">
+    <i class="fa-solid fa-circle-info toast-icon"></i>
+    <span class="toast-message" id="toast-msg">Thông báo tự động!</span>
+  </div>
+
+  <!-- JS Router and Controller -->
+  <script src="/app.js?v=5"></script>
+</body>
+
+</html>
