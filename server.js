@@ -268,7 +268,9 @@ app.post('/api/settings/:key', async (req, res) => {
     if (req.params.key === 'globalLayout' && oldSetting && oldSetting.value) {
       const oldBgUrl = oldSetting.value.bgImageUrl;
       const newBgUrl = value && value.bgImageUrl;
-      if (oldBgUrl && oldBgUrl !== newBgUrl) {
+      const oldBgId = oldBgUrl ? getPublicIdFromUrl(oldBgUrl) : null;
+      const newBgId = newBgUrl ? getPublicIdFromUrl(newBgUrl) : null;
+      if (oldBgId && oldBgId !== newBgId) {
         await deleteCloudinaryImage(oldBgUrl);
       }
     }
@@ -387,17 +389,24 @@ app.put('/api/stories/:id', async (req, res) => {
       }
     }
 
-    if (oldCoverUrl && oldCoverUrl !== newCoverUrl) {
+    const oldCoverId = oldCoverUrl ? getPublicIdFromUrl(oldCoverUrl) : null;
+    const newCoverId = newCoverUrl ? getPublicIdFromUrl(newCoverUrl) : null;
+    if (oldCoverId && oldCoverId !== newCoverId) {
       urlsToDelete.push(oldCoverUrl);
     }
-    if (oldIconUrl && oldIconUrl !== newIconUrl) {
+
+    const oldIconId = oldIconUrl ? getPublicIdFromUrl(oldIconUrl) : null;
+    const newIconId = newIconUrl ? getPublicIdFromUrl(newIconUrl) : null;
+    if (oldIconId && oldIconId !== newIconId) {
       urlsToDelete.push(oldIconUrl);
     }
 
     // 2. Background Image change detection
     const oldBgUrl = oldStory.layoutSettings && oldStory.layoutSettings.bgImageUrl;
     const newBgUrl = layoutSettings && layoutSettings.bgImageUrl;
-    if (oldBgUrl && oldBgUrl !== newBgUrl) {
+    const oldBgId = oldBgUrl ? getPublicIdFromUrl(oldBgUrl) : null;
+    const newBgId = newBgUrl ? getPublicIdFromUrl(newBgUrl) : null;
+    if (oldBgId && oldBgId !== newBgId) {
       urlsToDelete.push(oldBgUrl);
     }
 
@@ -556,16 +565,19 @@ app.put('/api/chapters/:chapterId', async (req, res) => {
       { new: true }
     );
 
-    // Compare and cleanup images
-    const oldUrls = [];
-    const newUrls = [];
+    // Compare and cleanup images based on Cloudinary Public ID to prevent deleting images whose width/align params changed
+    const oldPublicIds = [];
+    const newPublicIds = [];
     const imageRegex = /!\[.*?\]\((https?:\/\/res\.cloudinary\.com\/.*?)\)/g;
 
     if (oldChapter.content) {
       let match;
       imageRegex.lastIndex = 0;
       while ((match = imageRegex.exec(oldChapter.content)) !== null) {
-        oldUrls.push(match[1]);
+        const pId = getPublicIdFromUrl(match[1]);
+        if (pId) {
+          oldPublicIds.push({ url: match[1], publicId: pId });
+        }
       }
     }
 
@@ -573,14 +585,17 @@ app.put('/api/chapters/:chapterId', async (req, res) => {
       let match;
       imageRegex.lastIndex = 0;
       while ((match = imageRegex.exec(content)) !== null) {
-        newUrls.push(match[1]);
+        const pId = getPublicIdFromUrl(match[1]);
+        if (pId) {
+          newPublicIds.push(pId);
+        }
       }
     }
 
-    // Find URLs that were in old content but not in new content
-    const deletedUrls = oldUrls.filter(url => !newUrls.includes(url));
-    for (const url of [...new Set(deletedUrls)]) {
-      await deleteCloudinaryImage(url);
+    // Find old images whose publicId is no longer present in newPublicIds
+    const deletedImages = oldPublicIds.filter(item => !newPublicIds.includes(item.publicId));
+    for (const item of deletedImages) {
+      await deleteCloudinaryImage(item.url);
     }
 
     res.json(chapter);
